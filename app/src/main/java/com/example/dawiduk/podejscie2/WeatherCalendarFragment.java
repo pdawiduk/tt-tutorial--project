@@ -66,22 +66,6 @@ public class WeatherCalendarFragment extends Fragment {
                 startActivity(intent);
             }
         });
-//        listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//
-//               // Toast.makeText(getContext(), getContext().getString(R.string.toast_text), Toast.LENGTH_SHORT).show();
-//
-//
-//
-//                // Snackbar.make(view, getContext().getString(R.string.toast_text), Snackbar.LENGTH_LONG).setAction("click me ", new ShowSnackBar()).show();
-//
-//            }
-//        });
-//
-//        TextView displayInfo = (TextView) rootview.findViewById(R.id.textView_forecast);
-
 
 
         setHasOptionsMenu(true);

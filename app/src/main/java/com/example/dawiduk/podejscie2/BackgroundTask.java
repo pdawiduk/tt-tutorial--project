@@ -3,6 +3,7 @@ package com.example.dawiduk.podejscie2;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
@@ -45,7 +46,8 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
     BufferedReader reader;
     String JSONline;
 
-    private String getReadableDateString(long time){
+    @VisibleForTesting
+    String getReadableDateString(long time){
 
         SimpleDateFormat shortenedDateFormat = new SimpleDateFormat(TIME_FORMAT);
         return shortenedDateFormat.format(time);
@@ -71,7 +73,7 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
         final String OWM_MIN = "min";
         final String OWM_DESCRIPTION = "main";
 
-        JSONObject forecastJson = new JSONObject(forecastJsonStr);
+        JSONObject forecastJson =  new JSONObject(forecastJsonStr);
         JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
 
