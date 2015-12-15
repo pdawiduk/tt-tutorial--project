@@ -43,6 +43,9 @@ public class WeatherCalendarFragment extends Fragment {
             weatherTask.execute(ZIP_CODE_LODZ);
             return true;
         }
+
+
+
         return super.onOptionsItemSelected(item);
     }
 
