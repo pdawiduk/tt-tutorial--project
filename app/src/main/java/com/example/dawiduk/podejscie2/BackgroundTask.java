@@ -1,8 +1,8 @@
 package com.example.dawiduk.podejscie2;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.text.format.Time;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
@@ -26,36 +26,43 @@ import java.util.TimeZone;
 /**
  * Created by dawiduk on 11-12-15.
  */
-class InternetConnection extends AsyncTask<String, Void, String[]> {
-    private final String LOG_TAG = InternetConnection.class.getSimpleName();
-    private ArrayAdapter<String> adapter;
+class BackgroundTask extends AsyncTask<String, Void, String[]> {
 
-    public InternetConnection(ArrayAdapter<String> adapter){
-        this.adapter=adapter;
+    private static final String LOG_TAG = BackgroundTask.class.getSimpleName();
+    private static final int HOUR_IN_MILISEC=60*60*1000;
+    private static final String TIME_FORMAT="EEE MMM dd";
+    private ArrayAdapter<String> adapter;
+    private Context context;
+
+
+    public BackgroundTask(ArrayAdapter<String> adapter, Context context){
+        this.adapter = adapter;
+        this.context = context;
+
     }
 
-    HttpURLConnection connectUrl = null;
-    BufferedReader reader = null;
-    String JSONline = null;
+    HttpURLConnection connectUrl;
+    BufferedReader reader;
+    String JSONline;
 
     private String getReadableDateString(long time){
 
-        SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
+        SimpleDateFormat shortenedDateFormat = new SimpleDateFormat(TIME_FORMAT);
         return shortenedDateFormat.format(time);
     }
 
-    private String formatHighLows(double high, double low) {
+    private StringBuffer formatHighLows(double high, double low) {
         // For presentation, assume the user doesn't care about tenths of a degree.
         long roundedHigh = Math.round(high);
         long roundedLow = Math.round(low);
 
-        String highLowStr = roundedHigh + "/" + roundedLow;
-        return highLowStr;
+        return new StringBuffer(  roundedHigh + "/" + roundedLow);
+
     }
 
     private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
             throws JSONException {
-        String[] ids = TimeZone.getAvailableIDs(1 * 60 * 60 * 1000);
+        String[] ids = TimeZone.getAvailableIDs(HOUR_IN_MILISEC);
 
         final String OWM_LIST = "list";
         final String OWM_WEATHER = "weather";
@@ -67,10 +74,10 @@ class InternetConnection extends AsyncTask<String, Void, String[]> {
         JSONObject forecastJson = new JSONObject(forecastJsonStr);
         JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
-        SimpleTimeZone pdt = new SimpleTimeZone(1 * 60 * 60 * 1000,ids[0]);
 
 
-        GregorianCalendar dayTime = new GregorianCalendar(pdt);
+
+        GregorianCalendar dayTime;
 
         // now we work exclusively in UTC
         dayTime = new GregorianCalendar();
@@ -80,7 +87,7 @@ class InternetConnection extends AsyncTask<String, Void, String[]> {
             // For now, using the format "Day, description, hi/low"
             String day;
             String description;
-            String highAndLow;
+            StringBuffer highAndLow;
 
             // Get the JSON object representing the day
             JSONObject dayForecast = weatherArray.getJSONObject(i);
@@ -88,10 +95,10 @@ class InternetConnection extends AsyncTask<String, Void, String[]> {
             // The date/time is returned as a long.  We need to convert that
             // into something human-readable, since most people won't read "1400356800" as
             // "this saturday".
-            long dateTime;
+
             // Cheating to convert this to UTC time, which is what we want anyhow
             dayTime.add(Calendar.DATE,1);
-            dateTime = dayTime.get(Calendar.DATE);
+
 
             //day = getReadableDateString(dateTime);
             day = dayTime.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault())+" "+dayTime.get(Calendar.DAY_OF_MONTH);
@@ -117,7 +124,6 @@ class InternetConnection extends AsyncTask<String, Void, String[]> {
 
     }
 
-
     @Override
     protected String[] doInBackground(String... params) {
         String format="JSON";
@@ -132,48 +138,44 @@ class InternetConnection extends AsyncTask<String, Void, String[]> {
         final String APPID_PARAM="APPID";
 
 
-        String foo= new String();
+
         Uri ApiAdress=Uri.parse(FORECAST_BASE_URL).buildUpon()
                 .appendQueryParameter(QUERY_PARAM, params[0])
                 .appendQueryParameter(FORMAT_PARAM, format)
                 .appendQueryParameter(UNITS_PARAM, units)
                 .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
-                .appendQueryParameter(APPID_PARAM, "76dcef570419156ab818440e3a4f3311")
+                .appendQueryParameter(APPID_PARAM, context.getString(R.string.keyApi))
                 .build();
 
-        String endAndress=ApiAdress.toString();
-
-//// "76dcef570419156ab818440e3a4f3311"
-
         try {
-            URL url = new URL(endAndress);
+            URL url = new URL(ApiAdress.toString());
 
-            connectUrl = (HttpURLConnection) url.openConnection();//Otwieramy polaczenie
-            connectUrl.setRequestMethod("GET");// Ustawiamy metode pobierania
-            connectUrl.connect();// laczymy sie
+            connectUrl = (HttpURLConnection) url.openConnection();//open connection
+            connectUrl.setRequestMethod("GET");// set nethod
+            connectUrl.connect();
 
-            InputStream input = connectUrl.getInputStream();// ustawiamy strumien wejsciowy
-            StringBuffer buffer = new StringBuffer();
-            if (input == null) return null;
+            InputStream input = connectUrl.getInputStream();// set input stream
+            StringBuilder builider = new StringBuilder();
+            if (input == null) return new String[0] ;
 
             reader = new BufferedReader(new InputStreamReader(input));
 
             String line;
 
             while ((line = reader.readLine()) != null) {
-                buffer.append(line + '\n');
+                builider.append(line + '\n');
             }
 
-            if (buffer.length() == 0) return null; //jesli buffer pusty
 
-            JSONline = buffer.toString();
+
+            JSONline = builider.toString();
 
 
         } catch (IOException e) {
 
-            Log.e("Zjebalo sie w ", "ERROR Kurwa!!!:", e);
+            Log.e(LOG_TAG, "You  have an error", e);
 
-            return null;
+            return new String[0];
         } finally {
             if (connectUrl != null) connectUrl.disconnect();
 
@@ -182,7 +184,7 @@ class InternetConnection extends AsyncTask<String, Void, String[]> {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    Log.e("Zjebalo sie ERROR KURWA", "nie moge zamknac bufferReadera", e);
+                    Log.e(LOG_TAG, "you have an error", e);
                 }
             }
         }
@@ -197,7 +199,7 @@ class InternetConnection extends AsyncTask<String, Void, String[]> {
         }
 
 
-        return null;
+        return new String[0];
     }
 
     @Override

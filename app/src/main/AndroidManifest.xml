@@ -20,9 +20,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DetailsActivity"
-            android:label="@string/title_activity_details"
+            android:name=".DetailActivity"
+            android:label="@string/title_activity_detail"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.dawiduk.podejscie2.MainActivity" />
         </activity>
     </application>
 

@@ -6,4 +6,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="action_refresh">refresh</string>
     <string name="title_activity_details">detailsActivity</string>
+    <string name="keyApi">76dcef570419156ab818440e3a4f3311</string>
+    <string name="toast_text">this is a text in toast</string>
+    <string name="title_activity_detail">DetailActivity</string>
 </resources>

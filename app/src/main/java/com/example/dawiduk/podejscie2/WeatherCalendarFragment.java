@@ -1,32 +1,19 @@
 package com.example.dawiduk.podejscie2;
 
-import android.net.Uri;
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.text.format.Time;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +23,7 @@ public class WeatherCalendarFragment extends Fragment {
 
     private final String LOG_TAG = WeatherCalendarFragment.class.getSimpleName();
     public static final String ZIP_CODE_LODZ ="94043";
-    private ArrayAdapter<String> adapte;
+    private ArrayAdapter<String> adapter;
 
     public WeatherCalendarFragment() {
 
@@ -52,7 +39,7 @@ public class WeatherCalendarFragment extends Fragment {
 
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            InternetConnection weatherTask = new InternetConnection(adapte);
+            BackgroundTask weatherTask = new BackgroundTask(adapter,getContext());
             weatherTask.execute(ZIP_CODE_LODZ);
             return true;
         }
@@ -64,20 +51,41 @@ public class WeatherCalendarFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        List<String> lista=new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
-        adapte= new ArrayAdapter<String>(getActivity(),R.layout.list_item_forecast, list_item_forecast_textview,lista);
+        adapter = new ArrayAdapter(getActivity(),R.layout.list_item_forecast, list_item_forecast_textview,list);
 
-        View dupa=inflater.inflate(R.layout.fragment_moj, container, false);
-        ListView foofoo=(ListView) dupa.findViewById(R.id.listview_forecast);
-        foofoo.setAdapter(adapte);
+        View rootview=inflater.inflate(R.layout.fragment_weather_calendar, container, false);
+        ListView listView2=(ListView) rootview.findViewById(R.id.listview_forecast);
+        listView2.setAdapter(adapter);
 
-        TextView displayInfo = (TextView) dupa.findViewById(R.id.textView_forecast);
+        listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent=new Intent(getActivity(),DetailActivity.class).putExtra("info",adapter.getItem(position));
+                startActivity(intent);
+            }
+        });
+//        listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//
+//               // Toast.makeText(getContext(), getContext().getString(R.string.toast_text), Toast.LENGTH_SHORT).show();
+//
+//
+//
+//                // Snackbar.make(view, getContext().getString(R.string.toast_text), Snackbar.LENGTH_LONG).setAction("click me ", new ShowSnackBar()).show();
+//
+//            }
+//        });
+//
+//        TextView displayInfo = (TextView) rootview.findViewById(R.id.textView_forecast);
 
 
 
         setHasOptionsMenu(true);
-        return dupa;
+        return rootview;
     }
 
 
