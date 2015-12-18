@@ -11,7 +11,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v7.widget.ShareActionProvider;
+
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 /**
@@ -19,6 +20,7 @@ import android.widget.TextView;
  */
 public class DetailActivityFragment extends Fragment {
     private String ShareString;
+    private ShareActionProvider shareActionProvider;
 
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
@@ -33,17 +35,8 @@ public class DetailActivityFragment extends Fragment {
         inflater.inflate(R.menu.detailfragment, menu);
 
 
-        MenuItem menuItem = menu.findItem(R.id.action_share);
-
-        // Get the provider and hold onto it to set/change the share intent.
-        ShareActionProvider mShareActionProvider =
-                (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
-
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(createShareForecastIntent());
-        } else {
-            Log.d(LOG_TAG, "Share Action Provider is null?");
-        }
+        MenuItem item = menu.findItem(R.id.action_share);
+        shareActionProvider = (ShareActionProvider) item.getActionProvider();
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
