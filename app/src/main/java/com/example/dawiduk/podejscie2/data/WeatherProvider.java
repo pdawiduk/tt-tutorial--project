@@ -191,4 +191,5 @@ public class WeatherProvider extends ContentProvider {
         dbHelper.close();
         super.shutdown();
     }
+}
 
