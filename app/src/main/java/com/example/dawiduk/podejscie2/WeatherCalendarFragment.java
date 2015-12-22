@@ -72,7 +72,7 @@ public class WeatherCalendarFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra(MESSAGE_ALLIAS, adapter.getItem(position));
+               // intent.putExtra(MESSAGE_ALLIAS, adapter.getItem(position));
 
                 startActivity(intent);
             }

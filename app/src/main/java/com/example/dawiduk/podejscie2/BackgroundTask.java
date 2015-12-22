@@ -7,6 +7,8 @@ import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.example.dawiduk.podejscie2.data.ForecastAdapter;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,11 +34,11 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
     private static final String LOG_TAG = BackgroundTask.class.getSimpleName();
     private static final int HOUR_IN_MILISEC=60*60*1000;
     private static final String TIME_FORMAT="EEE MMM dd";
-    private ArrayAdapter<String> adapter;
+    private ForecastAdapter adapter;
     private Context context;
 
 
-    public BackgroundTask(ArrayAdapter<String> adapter, Context context){
+    public BackgroundTask(ForecastAdapter adapter, Context context){
         this.adapter = adapter;
         this.context = context;
 
@@ -76,9 +78,6 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
         JSONObject forecastJson =  new JSONObject(forecastJsonStr);
         JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
-
-
-
         GregorianCalendar dayTime;
 
         // now we work exclusively in UTC
@@ -86,19 +85,14 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
 
         String[] resultStrs = new String[numDays];
         for(int i = 0; i < weatherArray.length(); i++) {
-            // For now, using the format "Day, description, hi/low"
+
             String day;
             String description;
             StringBuffer highAndLow;
 
-            // Get the JSON object representing the day
+
             JSONObject dayForecast = weatherArray.getJSONObject(i);
 
-            // The date/time is returned as a long.  We need to convert that
-            // into something human-readable, since most people won't read "1400356800" as
-            // "this saturday".
-
-            // Cheating to convert this to UTC time, which is what we want anyhow
             dayTime.add(Calendar.DATE,1);
 
 
@@ -204,14 +198,5 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
         return new String[0];
     }
 
-    @Override
-    protected void onPostExecute(String[] result) {
-        if (result != null) {
-            adapter.clear();
-            for(String dayForecastStr : result) {
-                adapter.add(dayForecastStr);
-            }
-            // New data is back from the server.  Hooray!
-        }
-    }
+
 }
