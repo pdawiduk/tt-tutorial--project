@@ -48,21 +48,7 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
     BufferedReader reader;
     String JSONline;
 
-    @VisibleForTesting
-    String getReadableDateString(long time){
 
-        SimpleDateFormat shortenedDateFormat = new SimpleDateFormat(TIME_FORMAT);
-        return shortenedDateFormat.format(time);
-    }
-
-    private StringBuffer formatHighLows(double high, double low) {
-        // For presentation, assume the user doesn't care about tenths of a degree.
-        long roundedHigh = Math.round(high);
-        long roundedLow = Math.round(low);
-
-        return new StringBuffer(  roundedHigh + "/" + roundedLow);
-
-    }
 
     private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
             throws JSONException {
@@ -109,8 +95,8 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
             double high = temperatureObject.getDouble(OWM_MAX);
             double low = temperatureObject.getDouble(OWM_MIN);
 
-            highAndLow = formatHighLows(high, low);
-            resultStrs[i] = day + " - " + description + " - " + highAndLow;
+
+
         }
 
         for (String s : resultStrs) {
