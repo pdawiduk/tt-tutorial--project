@@ -66,7 +66,6 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
 
         GregorianCalendar dayTime;
 
-        // now we work exclusively in UTC
         dayTime = new GregorianCalendar();
 
         String[] resultStrs = new String[numDays];
@@ -80,17 +79,12 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
             JSONObject dayForecast = weatherArray.getJSONObject(i);
 
             dayTime.add(Calendar.DATE,1);
-
-
-            //day = getReadableDateString(dateTime);
             day = dayTime.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault())+" "+dayTime.get(Calendar.DAY_OF_MONTH);
 
-            // description is in a child array called "weather", which is 1 element long.
+
             JSONObject weatherObject = dayForecast.getJSONArray(OWM_WEATHER).getJSONObject(0);
             description = weatherObject.getString(OWM_DESCRIPTION);
 
-            // Temperatures are in a child object called "temp".  Try not to name variables
-            // "temp" when working with temperature.  It confuses everybody.
             JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
             double high = temperatureObject.getDouble(OWM_MAX);
             double low = temperatureObject.getDouble(OWM_MIN);
