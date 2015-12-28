@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.dawiduk.podejscie2.data.ForecastAdapter;
 import com.example.dawiduk.podejscie2.data.WeatherContract;
 import com.example.dawiduk.podejscie2.data.WeatherContract.WeatherEntry;
 

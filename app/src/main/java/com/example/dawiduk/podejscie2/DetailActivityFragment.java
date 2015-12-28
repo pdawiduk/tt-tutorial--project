@@ -23,7 +23,7 @@ public class DetailActivityFragment extends Fragment {
     private ShareActionProvider shareActionProvider;
 
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
-    private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
+    private static final String FORECAST_SHARE_HASHTAG = " #WeatherAPP";
 
     public DetailActivityFragment() {
     }

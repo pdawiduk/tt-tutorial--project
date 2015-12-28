@@ -3,22 +3,19 @@ package com.example.dawiduk.podejscie2.data;
 /**
  * Created by dawiduk on 18-12-15.
  */
+
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.text.format.Time;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-/**
- * Defines table and column names for the weather database.
- */
 public class WeatherContract {
 
-    private static final int HOUR_IN_MILISEC=60*60*1000;
-    public static final String CONTENT_AUTHORITY = "com.example.android.sunshine.app";
+    private static final int HOUR_IN_MILISEC = 60 * 60 * 1000;
+    public static final String CONTENT_AUTHORITY = "com.example.dawiduk.podejscie2.app";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
     public static final String PATH_WEATHER = "weather";
     public static final String PATH_LOCATION = "location";
@@ -94,6 +91,7 @@ public class WeatherContract {
 
 
         public static final String COLUMN_DEGREES = "degrees";
+
         public static Uri buildWeatherLocation(String locationSetting) {
             return null;
         }

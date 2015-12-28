@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private final String FORECASTFRAGMENT_TAG = "FFTAG";
     private String actualLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,10 +57,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(geoLocation);
 
-        if (intent.resolveActivity(getPackageManager())!=null){
+        if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
-        }
-        else{
+        } else {
             Log.d(LOG_TAG, "Couldn't call " + location + ", no receiving apps installed!");
         }
     }
@@ -67,9 +67,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        String location  = Utility.getPreferredLocation(this);
-        if (location!=null && !location.equals(actualLocation)){
+        String location = Utility.getPreferredLocation(this);
+        if (location != null && !location.equals(actualLocation)) {
             WeatherCalendarFragment wcf = (WeatherCalendarFragment) getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+
+            if (wcf!=null){
+                wcf.onLocationChanged();
+            }
+            actualLocation=location;
         }
     }
 }

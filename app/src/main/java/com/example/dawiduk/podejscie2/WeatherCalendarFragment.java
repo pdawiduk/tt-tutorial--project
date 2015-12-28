@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.dawiduk.podejscie2.data.ForecastAdapter;
 import com.example.dawiduk.podejscie2.data.WeatherContract;
 
 public class WeatherCalendarFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -113,13 +112,18 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }
 
+    private void updateWeather() {
+        BackgroundTask task = new BackgroundTask(getActivity());
+        task.execute(Utility.getPreferredLocation(getActivity()));
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String locationSettings= Utility.getPreferredLocation(getActivity());
-        String sortOrder= WeatherContract.WeatherEntry.COLUMN_DATE +"ASC";
-        Uri weatherForLocationUri=WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
-                locationSettings,System.currentTimeMillis()
+        String locationSettings = Utility.getPreferredLocation(getActivity());
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + "ASC";
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
+                locationSettings, System.currentTimeMillis()
         );
 
         return new CursorLoader(getActivity(),
@@ -128,7 +132,6 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
                 null,
                 null,
                 sortOrder);
-
     }
 
     @Override
@@ -139,11 +142,6 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.swapCursor(null);
-    }
-
-    private void updateWeather() {
-        BackgroundTask task = new BackgroundTask(getActivity());
-        task.execute(Utility.getPreferredLocation(getActivity()));
     }
 
 
