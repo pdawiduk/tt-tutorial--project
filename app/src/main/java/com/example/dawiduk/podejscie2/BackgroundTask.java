@@ -38,6 +38,10 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
     private ForecastAdapter adapter;
     private Context context;
 
+    public BackgroundTask(Context context){
+        this.context=context;
+    }
+
 
     long addLocation(String locationSetting, String cityName, double lat, double lon) {
         long locationId;

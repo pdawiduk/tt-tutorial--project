@@ -11,6 +11,8 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private final String FORECASTFRAGMENT_TAG = "FFTAG";
+    private String actualLocation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +64,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String location  = Utility.getPreferredLocation(this);
+        if (location!=null && !location.equals(actualLocation)){
+            WeatherCalendarFragment wcf = (WeatherCalendarFragment) getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+        }
+    }
 }
 
 
