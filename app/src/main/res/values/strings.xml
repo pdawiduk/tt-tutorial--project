@@ -98,4 +98,5 @@
     <string name="pref_units_imperial" translatable="false">imperial</string>
 
     <string name="action_share">Share IT</string>
+    <string name="action_map">Map location</string>
 </resources>
