@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.dawiduk.podejscie2.data.WeatherContract;
 
@@ -28,8 +29,10 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
     private final String LOG_TAG = WeatherCalendarFragment.class.getSimpleName();
     private ForecastAdapter adapter;
 
-    private static final String[] FORECAST_COLUMNS = {WeatherContract.WeatherEntry.TABLE_NAME
-            + "." + WeatherContract.WeatherEntry.COLUMN_DATE,
+    private static final String[] FORECAST_COLUMNS = {
+            WeatherContract.WeatherEntry.TABLE_NAME + "."
+                    + WeatherContract.WeatherEntry._ID,
+            WeatherContract.WeatherEntry.COLUMN_DATE,
             WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
             WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
             WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
@@ -74,6 +77,8 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Toast toast = Toast.makeText(getContext(), "onCreateView wcf ", Toast.LENGTH_SHORT);
+        toast.show();
 
         adapter = new ForecastAdapter(getActivity(), null, 0);
 
@@ -121,7 +126,7 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
         String locationSettings = Utility.getPreferredLocation(getActivity());
-        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + "ASC";
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
         Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
                 locationSettings, System.currentTimeMillis()
         );
@@ -136,11 +141,13 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
         adapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+
         adapter.swapCursor(null);
     }
 

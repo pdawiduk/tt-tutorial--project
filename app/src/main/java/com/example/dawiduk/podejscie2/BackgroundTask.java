@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.dawiduk.podejscie2.data.WeatherContract;
 import com.example.dawiduk.podejscie2.data.WeatherContract.WeatherEntry;
@@ -21,8 +22,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.Vector;
 
@@ -43,6 +46,8 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
 
 
     long addLocation(String locationSetting, String cityName, double lat, double lon) {
+
+
         long locationId;
 
 
@@ -94,7 +99,6 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
 
     private void getWeatherDataFromJson(String forecastJsonStr, String locationSetting)
             throws JSONException {
-        String[] ids = TimeZone.getAvailableIDs(HOUR_IN_MILISEC);
 
 
         final String OWM_CITY = "city";
@@ -119,14 +123,16 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
 
         JSONObject forecastJson = new JSONObject(forecastJsonStr);
         JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
-        JSONObject cityJson = forecastJson.getJSONObject(OWM_CITY);
 
+        JSONObject cityJson = forecastJson.getJSONObject(OWM_CITY);
         String cityname = cityJson.getString(OWM_CITY_NAME);
 
         JSONObject cityCoord = cityJson.getJSONObject(OWM_COORD);
+
         double cityLatiude = cityCoord.getDouble(OWM_LATITUDE);
         double cityLogitude = cityCoord.getDouble(OWM_LONGITUDE);
-        Vector<ContentValues> Wector = new Vector<ContentValues>(weatherArray.length());
+
+        List<ContentValues> contentList = new ArrayList<ContentValues>();
 
         long locationId = addLocation(locationSetting, cityname, cityLatiude, cityLogitude);
         GregorianCalendar dayTime;
@@ -159,8 +165,6 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
             windSpeed = dayForecast.getDouble(OWM_WINDSPEED);
             windDirection = dayForecast.getDouble(OWM_WIND_DIRECTION);
 
-            //day = dayTime.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()) + " " + dayTime.get(Calendar.DAY_OF_MONTH);
-
 
             JSONObject weatherObject = dayForecast.getJSONArray(OWM_WEATHER).getJSONObject(0);
             weatherId = weatherObject.getInt(OWM_WEATHER_ID);
@@ -184,23 +188,32 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
             weatherValues.put(WeatherEntry.COLUMN_SHORT_DESC, description);
             weatherValues.put(WeatherEntry.COLUMN_WEATHER_ID, weatherId);
 
-            Wector.add(weatherValues);
+            contentList.add(weatherValues);
 
 
         }
 
         int inserted = 0;
 
-        if (Wector.size() > 0) {
-            ContentValues[] cvArray = new ContentValues[Wector.size()];
-            Wector.toArray(cvArray);
+        if (contentList.size() > 0) {
+            ContentValues[] cvArray = new ContentValues[contentList.size()];
+            contentList.toArray(cvArray);
             inserted = context.getContentResolver().bulkInsert(WeatherEntry.CONTENT_URI, cvArray);
         }
+
+        Log.d(LOG_TAG, "BackgroundTask Complete. " + inserted + " Inserted");
 
     }
 
     @Override
     protected String[] doInBackground(String... params) {
+
+
+
+        if(params.length==0){
+            return new String[0];
+        }
+
         String format = "JSON";
         String units = "metric";
         int numDays = 7;
@@ -211,6 +224,8 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
         final String UNITS_PARAM = "units";
         final String DAYS_PARAM = "cnt";
         final String APPID_PARAM = "APPID";
+
+        String locationQuery = params[0];
 
 
         Uri ApiAdress = Uri.parse(FORECAST_BASE_URL).buildUpon()
@@ -230,6 +245,7 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
 
             InputStream input = connectUrl.getInputStream();// set input stream
             StringBuilder builider = new StringBuilder();
+
             if (input == null) return new String[0];
 
             reader = new BufferedReader(new InputStreamReader(input));
@@ -242,6 +258,7 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
 
 
             JSONline = builider.toString();
+            getWeatherDataFromJson(JSONline,locationQuery);
 
 
         } catch (IOException e) {
@@ -249,6 +266,8 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
             Log.e(LOG_TAG, "You  have an error", e);
 
             return new String[0];
+        } catch (JSONException e) {
+            e.printStackTrace();
         } finally {
             if (connectUrl != null) connectUrl.disconnect();
 

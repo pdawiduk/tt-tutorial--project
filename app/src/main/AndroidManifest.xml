@@ -33,7 +33,7 @@
             android:label="@string/title_activity_settings" >
         </activity>
         <provider
-            android:authorities="com.example.dawiduk.podejscie2.app"
+            android:authorities="com.example.dawiduk.podejscie2"
             android:name=".data.WeatherProvider"/>
     </application>
 
