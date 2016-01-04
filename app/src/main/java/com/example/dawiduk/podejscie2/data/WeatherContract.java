@@ -8,6 +8,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.text.format.Time;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -22,8 +23,10 @@ public class WeatherContract {
 
     public static long normalizeDate(long startDate) {
 
-        GregorianCalendar time = new GregorianCalendar();
-        return time.get(Calendar.DAY_OF_MONTH);
+        Time time = new Time();
+        time.set(startDate);
+        int julianDay = Time.getJulianDay(startDate, time.gmtoff);
+        return time.setJulianDay(julianDay);
 
     }
 

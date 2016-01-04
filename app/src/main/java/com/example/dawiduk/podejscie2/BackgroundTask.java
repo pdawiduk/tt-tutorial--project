@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.text.format.Time;
 import android.util.Log;
 
 import com.example.dawiduk.podejscie2.data.WeatherContract;
@@ -129,9 +130,12 @@ public class BackgroundTask extends AsyncTask<String, Void, Void> {
         List<ContentValues> contentList = new ArrayList<ContentValues>();
 
         long locationId = addLocation(locationSetting, cityName, cityLatiude, cityLogitude);
-        GregorianCalendar dayTime;
+        Time dayTime = new Time();
+        dayTime.setToNow();
 
-        dayTime = new GregorianCalendar();
+        int julianStartDay = Time.getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
+
+        dayTime = new Time();
 
         for (int i = 0; i < weatherArray.length(); i++) {
 
@@ -150,8 +154,7 @@ public class BackgroundTask extends AsyncTask<String, Void, Void> {
 
             JSONObject dayForecast = weatherArray.getJSONObject(i);
 
-            dayTime.add(Calendar.DATE, 1);
-            dateTime=dayTime.get(Calendar.DAY_OF_MONTH);
+            dateTime = dayTime.setJulianDay(julianStartDay+i);
 
             pressure = dayForecast.getDouble(OWM_PRESSURE);
             humidity = dayForecast.getInt(OWM_HUMIDITY);
@@ -212,7 +215,7 @@ public class BackgroundTask extends AsyncTask<String, Void, Void> {
 
         String format = "JSON";
         String units = "metric";
-        int numDays = 7;
+        int numDays = 14;
 
         final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
         final String QUERY_PARAM = "q";
@@ -235,7 +238,7 @@ public class BackgroundTask extends AsyncTask<String, Void, Void> {
         try {
             URL url = new URL(ApiAdress.toString());
 
-            connectUrl = (HttpURLConnection) url.openConnection();//open connection
+            connectUrl = (HttpURLConnection) url.openConnection();
             connectUrl.setRequestMethod("GET");
             connectUrl.connect();
 
