@@ -15,7 +15,7 @@ import java.util.GregorianCalendar;
 public class WeatherContract {
 
     private static final int HOUR_IN_MILISEC = 60 * 60 * 1000;
-    public static final String CONTENT_AUTHORITY = "com.example.dawiduk.podejscie2.app";
+    public static final String CONTENT_AUTHORITY = "com.example.dawiduk.podejscie2";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
     public static final String PATH_WEATHER = "weather";
     public static final String PATH_LOCATION = "location";
@@ -88,9 +88,9 @@ public class WeatherContract {
 
         public static final String COLUMN_DEGREES = "degrees";
 
-        public static Uri buildWeatherLocation(String locationSetting) {
-            return CONTENT_URI.buildUpon().appendPath(locationSetting).build();
-        }
+//        public static Uri buildWeatherLocation(String locationSetting) {
+//            return CONTENT_URI.buildUpon().appendPath(locationSetting).build();
+//        }
 
         public static Uri buildWeatherLocationWithStartDate(
                 String locationSetting, long startDate) {

@@ -93,7 +93,8 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
 
                 if (cursor != null) {
                     String locationSettings = Utility.getPreferredLocation(getActivity());
-                    Intent intent = new Intent(getActivity(), DetailActivity.class).setData(WeatherContract.
+                    Intent intent = new Intent(getActivity(), DetailActivity.class)
+                            .setData(WeatherContract.
                             WeatherEntry.buildWeatherLocationWithDate(
                             locationSettings, cursor.getLong(COL_WEATHER_DATE)));
                     startActivity(intent);
@@ -102,7 +103,7 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
         });
 
 
-        setHasOptionsMenu(true);
+
         return rootview;
     }
 

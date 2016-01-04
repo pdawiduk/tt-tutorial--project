@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.dawiduk.podejscie2.data.WeatherContract;
 import com.example.dawiduk.podejscie2.data.WeatherContract.WeatherEntry;
@@ -26,13 +25,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.TimeZone;
-import java.util.Vector;
 
 /**
  * Created by dawiduk on 11-12-15.
  */
-class BackgroundTask extends AsyncTask<String, Void, String[]> {
+public class BackgroundTask extends AsyncTask<String, Void, Void> {
 
     private static final String LOG_TAG = BackgroundTask.class.getSimpleName();
     private static final int HOUR_IN_MILISEC = 60 * 60 * 1000;
@@ -40,16 +37,11 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
     private ForecastAdapter adapter;
     private Context context;
 
-    public BackgroundTask(Context context){
-        this.context=context;
-    }
 
 
     long addLocation(String locationSetting, String cityName, double lat, double lon) {
 
-
         long locationId;
-
 
         Cursor locationCursor = context.getContentResolver().query(
                 WeatherContract.LocationEntry.CONTENT_URI,
@@ -86,15 +78,15 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
     }
 
 
-    public BackgroundTask(ForecastAdapter adapter, Context context) {
-        this.adapter = adapter;
+    public BackgroundTask( Context context) {
+
         this.context = context;
 
     }
 
     HttpURLConnection connectUrl;
     BufferedReader reader;
-    String JSONline;
+    String forecastJsonStr;
 
 
     private void getWeatherDataFromJson(String forecastJsonStr, String locationSetting)
@@ -104,10 +96,12 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
         final String OWM_CITY = "city";
         final String OWM_CITY_NAME = "name";
         final String OWM_COORD = "coord";
+
         final String OWM_LATITUDE = "lat";
         final String OWM_LONGITUDE = "lon";
 
         final String OWM_LIST = "list";
+
         final String OWM_WEATHER = "weather";
         final String OWM_TEMPERATURE = "temp";
         final String OWM_MAX = "max";
@@ -125,7 +119,7 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
         JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
         JSONObject cityJson = forecastJson.getJSONObject(OWM_CITY);
-        String cityname = cityJson.getString(OWM_CITY_NAME);
+        String cityName = cityJson.getString(OWM_CITY_NAME);
 
         JSONObject cityCoord = cityJson.getJSONObject(OWM_COORD);
 
@@ -134,11 +128,10 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
 
         List<ContentValues> contentList = new ArrayList<ContentValues>();
 
-        long locationId = addLocation(locationSetting, cityname, cityLatiude, cityLogitude);
+        long locationId = addLocation(locationSetting, cityName, cityLatiude, cityLogitude);
         GregorianCalendar dayTime;
 
         dayTime = new GregorianCalendar();
-
 
         for (int i = 0; i < weatherArray.length(); i++) {
 
@@ -205,13 +198,16 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
 
     }
 
+
+
     @Override
-    protected String[] doInBackground(String... params) {
+    protected Void doInBackground(String... params) {
 
 
 
         if(params.length==0){
-            return new String[0];
+
+            return null;
         }
 
         String format = "JSON";
@@ -240,13 +236,13 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
             URL url = new URL(ApiAdress.toString());
 
             connectUrl = (HttpURLConnection) url.openConnection();//open connection
-            connectUrl.setRequestMethod("GET");// set nethod
+            connectUrl.setRequestMethod("GET");
             connectUrl.connect();
 
-            InputStream input = connectUrl.getInputStream();// set input stream
-            StringBuilder builider = new StringBuilder();
+            InputStream input = connectUrl.getInputStream();
+            StringBuffer builider = new StringBuffer();
 
-            if (input == null) return new String[0];
+            if (input == null) return null;
 
             reader = new BufferedReader(new InputStreamReader(input));
 
@@ -255,17 +251,18 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
             while ((line = reader.readLine()) != null) {
                 builider.append(line + '\n');
             }
+            if(builider.length()==0) return null;
 
 
-            JSONline = builider.toString();
-            getWeatherDataFromJson(JSONline,locationQuery);
+            forecastJsonStr = builider.toString();
+            getWeatherDataFromJson(forecastJsonStr,locationQuery);
 
 
         } catch (IOException e) {
 
             Log.e(LOG_TAG, "You  have an error", e);
 
-            return new String[0];
+
         } catch (JSONException e) {
             e.printStackTrace();
         } finally {
@@ -282,7 +279,8 @@ class BackgroundTask extends AsyncTask<String, Void, String[]> {
         }
 
 
-        return new String[0];
+   //     return new String[0];
+        return null;
     }
 
 
