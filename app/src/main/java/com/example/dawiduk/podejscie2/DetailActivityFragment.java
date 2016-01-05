@@ -22,9 +22,6 @@ import android.widget.TextView;
 import com.example.dawiduk.podejscie2.data.WeatherContract;
 import com.example.dawiduk.podejscie2.data.WeatherContract.WeatherEntry;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class DetailActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private String forecast;
     private ShareActionProvider shareActionProvider;
@@ -77,15 +74,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.detailfragment, menu);
 
-
-        MenuItem item = menu.findItem(R.id.action_share);
-        shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-
-        if (forecast != null) {
-            shareActionProvider.setShareIntent(createShareForecastIntent());
-        }
     }
 
     @Override
@@ -126,7 +115,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.v(LOG_TAG, "In onCreateLoader");
         Intent intent = getActivity().getIntent();
-        if (intent == null) {
+        if (intent == null|| intent.getData()==null) {
             return null;
         }
 
@@ -179,11 +168,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             float windDirStr = data.getFloat(COL_WEATHER_DEGREES);
             windView.setText(Utility.getFormattedWind(getActivity(), windSpeedStr, windDirStr));
 
-            // Read pressure from cursor and update view
+
             float pressure = data.getFloat(COL_WEATHER_PRESSURE);
             pressureView.setText(getActivity().getString(R.string.format_pressure, pressure));
 
-            // We still need this for the share intent
+
             forecast = String.format("%s - %s - %s/%s", dateText, description, high, low);
 
 
