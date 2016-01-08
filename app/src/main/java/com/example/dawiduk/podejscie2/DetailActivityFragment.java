@@ -2,18 +2,17 @@ package com.example.dawiduk.podejscie2;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,9 +23,11 @@ import com.example.dawiduk.podejscie2.data.WeatherContract.WeatherEntry;
 
 public class DetailActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private String forecast;
+    private Uri helpUri;
     private ShareActionProvider shareActionProvider;
 
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
+    static final String DETAIL_URI = "URI";
     private static final String FORECAST_SHARE_HASHTAG = " #WeatherAPP";
 
     private static final int DETAIL_LOADER = 0;
@@ -81,7 +82,13 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_detail,container,false);
+        Bundle arguments = getArguments();
+
+        if (arguments != null) {
+            helpUri = arguments.getParcelable(DetailActivityFragment.DETAIL_URI);
+        }
+
+        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         iconView = (ImageView) rootView.findViewById(R.id.detail_icon);
         dateView = (TextView) rootView.findViewById(R.id.detail_date_textview);
         friendlyDateView = (TextView) rootView.findViewById(R.id.detail_day_textview);
@@ -113,21 +120,21 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.v(LOG_TAG, "In onCreateLoader");
-        Intent intent = getActivity().getIntent();
-        if (intent == null|| intent.getData()==null) {
-            return null;
+        if (helpUri != null) {
+
+            return new CursorLoader(
+                    getActivity(),
+                    helpUri,
+                    FORECAST_COLUMNS,
+                    null,
+                    null,
+                    null
+            );
         }
 
-        return new CursorLoader(
-                getActivity(),
-                intent.getData(),
-                FORECAST_COLUMNS,
-                null,
-                null,
-                null
-        );
+        return null;
     }
+
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
@@ -161,8 +168,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
 
             float humidity = data.getFloat(COL_WEATHER_HUMIDITY);
-            humidityView.setText(getActivity().getString(R.string.format_humidity, humidity));
-
 
             float windSpeedStr = data.getFloat(COL_WEATHER_WIND_SPEED);
             float windDirStr = data.getFloat(COL_WEATHER_DEGREES);
@@ -181,6 +186,20 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             }
         }
 
+    }
+
+    void onLocationChanged(String newLocation) {
+        Uri uri = helpUri;
+
+        if (null != uri) {
+
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updateUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+
+            helpUri = updateUri;
+            getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
+
+        }
     }
 
     @Override

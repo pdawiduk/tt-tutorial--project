@@ -8,12 +8,33 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Callbackable {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private String actualLocation;
     private boolean twoPane;
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
+
+
+    @Override
+        public void onItemSelected(Uri contentUri) {
+                if (twoPane) {
+
+                                                Bundle args = new Bundle();
+                        args.putParcelable(DetailActivityFragment.DETAIL_URI, contentUri);
+
+                                DetailActivityFragment fragment = new DetailActivityFragment();
+                        fragment.setArguments(args);
+
+                                getSupportFragmentManager().beginTransaction()
+                                       .replace(R.id.weather_detail_container, fragment, DETAILFRAGMENT_TAG)
+                                        .commit();
+                    } else {
+                        Intent intent = new Intent(this, DetailActivity.class)
+                                        .setData(contentUri);
+                        startActivity(intent);
+                    }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,13 +99,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         String location = Utility.getPreferredLocation(this);
+
         if (location != null && !location.equals(actualLocation)) {
             WeatherCalendarFragment wcf = (WeatherCalendarFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
 
             if (wcf!=null){
                 wcf.onLocationChanged();
             }
-            actualLocation=location;
+            DetailActivityFragment daf= (DetailActivityFragment) getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+            if(daf!=null){
+                daf.onLocationChanged(location);
+            }
+                    actualLocation=location;
         }
     }
 }
