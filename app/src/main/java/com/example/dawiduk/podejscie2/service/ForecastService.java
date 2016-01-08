@@ -1,8 +1,10 @@
 package com.example.dawiduk.podejscie2.service;
 
 import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -269,4 +271,17 @@ public class ForecastService extends IntentService {
         Log.d(LOG_TAG, "BackgroundTask Complete. " + inserted + " Inserted");
 
     }
+
+    public static class AlarmReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Intent sendIntent = new Intent(context, ForecastService.class);
+            sendIntent.putExtra(ForecastService.LOCATION_QUERY_EXTRA, intent.getStringExtra(ForecastService.LOCATION_QUERY_EXTRA));
+            context.startService(sendIntent);
+
+        }
+    }
 }
+
+

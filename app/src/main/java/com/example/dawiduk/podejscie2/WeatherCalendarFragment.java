@@ -1,5 +1,8 @@
 package com.example.dawiduk.podejscie2;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -135,10 +138,15 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
     }
 
     private void updateWeather() {
-        Intent intent = new Intent(getActivity(), ForecastService.class);
-        intent.putExtra(ForecastService.LOCATION_QUERY_EXTRA,
-                Utility.getPreferredLocation(getActivity()));
-        getActivity().startService(intent); }
+        Intent alarmIntent = new Intent(getActivity(), ForecastService.AlarmReceiver.class);
+        alarmIntent.putExtra(ForecastService.LOCATION_QUERY_EXTRA, Utility.getPreferredLocation(getActivity()));
+
+        PendingIntent pi = PendingIntent.getBroadcast(getActivity(), 0,alarmIntent,PendingIntent.FLAG_ONE_SHOT);
+
+        AlarmManager am=(AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+
+        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pi);
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
