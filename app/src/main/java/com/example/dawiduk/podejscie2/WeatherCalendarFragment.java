@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.dawiduk.podejscie2.data.WeatherContract;
+import com.example.dawiduk.podejscie2.service.ForecastService;
 
 public class WeatherCalendarFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -134,9 +135,10 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
     }
 
     private void updateWeather() {
-        BackgroundTask task = new BackgroundTask(getActivity());
-        task.execute(Utility.getPreferredLocation(getActivity()));
-    }
+        Intent intent = new Intent(getActivity(), ForecastService.class);
+        intent.putExtra(ForecastService.LOCATION_QUERY_EXTRA,
+                Utility.getPreferredLocation(getActivity()));
+        getActivity().startService(intent); }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

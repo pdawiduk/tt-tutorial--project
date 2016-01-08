@@ -35,6 +35,8 @@
         <provider
             android:authorities="com.example.dawiduk.podejscie2"
             android:name=".data.WeatherProvider"/>
+
+        <service android:name=".service.ForecastService"/>
     </application>
 
 </manifest>
