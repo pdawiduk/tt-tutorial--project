@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.example.dawiduk.podejscie2.data.WeatherContract;
 import com.example.dawiduk.podejscie2.service.ForecastService;
+import com.example.dawiduk.podejscie2.sync.SunshineSyncAdapter;
 
 public class WeatherCalendarFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -138,14 +139,7 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
     }
 
     private void updateWeather() {
-        Intent alarmIntent = new Intent(getActivity(), ForecastService.AlarmReceiver.class);
-        alarmIntent.putExtra(ForecastService.LOCATION_QUERY_EXTRA, Utility.getPreferredLocation(getActivity()));
-
-        PendingIntent pi = PendingIntent.getBroadcast(getActivity(), 0,alarmIntent,PendingIntent.FLAG_ONE_SHOT);
-
-        AlarmManager am=(AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
-
-        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pi);
+        SunshineSyncAdapter.syncImmediately(getActivity());
     }
 
     @Override
