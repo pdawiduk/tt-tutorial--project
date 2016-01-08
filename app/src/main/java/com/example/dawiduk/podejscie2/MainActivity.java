@@ -8,11 +8,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity implements Callbackable {
+public class MainActivity extends AppCompatActivity implements WeatherCalendarFragment.Callback {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private String actualLocation;
-    private boolean twoPane;
+    private boolean twoPane=false;
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
 
 
@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements Callbackable {
         public void onItemSelected(Uri contentUri) {
                 if (twoPane) {
 
-                                                Bundle args = new Bundle();
+                    Bundle args = new Bundle();
                         args.putParcelable(DetailActivityFragment.DETAIL_URI, contentUri);
 
                                 DetailActivityFragment fragment = new DetailActivityFragment();
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements Callbackable {
                                 getSupportFragmentManager().beginTransaction()
                                        .replace(R.id.weather_detail_container, fragment, DETAILFRAGMENT_TAG)
                                         .commit();
-                    } else {
+                } else {
                         Intent intent = new Intent(this, DetailActivity.class)
                                         .setData(contentUri);
                         startActivity(intent);

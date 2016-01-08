@@ -23,11 +23,18 @@ import com.example.dawiduk.podejscie2.data.WeatherContract;
 
 public class WeatherCalendarFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    public interface Callback {
+
+        public void onItemSelected(Uri dateUri);}
 
     public static final String MESSAGE_ALLIAS = "info";
 
     private final String LOG_TAG = WeatherCalendarFragment.class.getSimpleName();
     private ForecastAdapter adapter;
+
+    private ListView newListView;
+    private int actPosition = ListView.INVALID_POSITION;
+    private static final String SELECTED_KEY = "selected_position";
 
     private static final String[] FORECAST_COLUMNS = {
             WeatherContract.WeatherEntry.TABLE_NAME + "."
@@ -83,27 +90,31 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
         adapter = new ForecastAdapter(getActivity(), null, 0);
 
         View rootview = inflater.inflate(R.layout.fragment_weather_calendar, container, false);
-        ListView listView2 = (ListView) rootview.findViewById(R.id.listview_forecast);
-        listView2.setAdapter(adapter);
+        newListView = (ListView) rootview.findViewById(R.id.listview_forecast);
+        newListView.setAdapter(adapter);
 
-        listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        newListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
 
                 if (cursor != null) {
                     String locationSettings = Utility.getPreferredLocation(getActivity());
-//                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-//                            .setData(WeatherContract.
-//                            WeatherEntry.buildWeatherLocationWithDate(
-//                            locationSettings, cursor.getLong(COL_WEATHER_DATE)));
-                 //   startActivity(intent);
-                    ((Callbackable) getActivity())
+
+                    ((Callback) getActivity())
                             .onItemSelected(WeatherContract.WeatherEntry.
-                                    buildWeatherLocationWithDate(locationSettings,cursor.getLong(COL_WEATHER_DATE)));
+                                    buildWeatherLocationWithDate(
+                                            locationSettings,
+                                            cursor.getLong(COL_WEATHER_DATE)));
                 }
+                actPosition=position;
             }
         });
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+
+            actPosition = savedInstanceState.getInt(SELECTED_KEY);
+        }
 
 
 

@@ -99,7 +99,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         windView = (TextView) rootView.findViewById(R.id.detail_wind_textview);
         pressureView = (TextView) rootView.findViewById(R.id.detail_pressure_textview);
 
-        return inflater.inflate(R.layout.fragment_detail, container, false);
+        return rootView;
 
     }
 
@@ -120,7 +120,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (helpUri != null) {
+        if (null != helpUri) {
 
             return new CursorLoader(
                     getActivity(),
@@ -143,7 +143,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
             int weatherId = data.getInt(COL_WEATHER_CONDITION_ID);
 
-            iconView.setImageResource(R.drawable.ic_launcher);
+            iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
 
 
             long date = data.getLong(COL_WEATHER_DATE);
@@ -192,10 +192,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         Uri uri = helpUri;
 
         if (null != uri) {
-
             long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
             Uri updateUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
-
             helpUri = updateUri;
             getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
 
