@@ -91,9 +91,7 @@ public class WeatherContract {
 
         public static final String COLUMN_DEGREES = "degrees";
 
-//        public static Uri buildWeatherLocation(String locationSetting) {
-//            return CONTENT_URI.buildUpon().appendPath(locationSetting).build();
-//        }
+
 
         public static Uri buildWeatherLocationWithStartDate(
                 String locationSetting, long startDate) {

@@ -122,8 +122,6 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
             actPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
 
-
-
         return rootview;
     }
 

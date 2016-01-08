@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.example.dawiduk.podejscie2.data.WeatherContract;
 import com.example.dawiduk.podejscie2.data.WeatherContract.WeatherEntry;
 
@@ -202,6 +204,15 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
+        YoYo.with(Techniques.Shake).duration(1000).playOn(iconView);
 
     }
 }

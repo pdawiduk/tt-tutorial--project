@@ -8,11 +8,11 @@
 
     <!-- Main activity theme. -->
     <style name="ForecastTheme" parent="AppTheme">
-        <item name="actionBarStyle">@style/ActionBar.Solid.Sunshine.NoTitle</item>
+        <item name="actionBarStyle">@style/ActionBar.Solid.NoTitle</item>
     </style>
 
     <!-- main activity action bar styles -->
-    <style name="ActionBar.Solid.Sunshine.NoTitle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+    <style name="ActionBar.Solid.NoTitle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="displayOptions">useLogo|showHome</item>
         <item name="logo">@drawable/ic_logo</item>
     </style>
