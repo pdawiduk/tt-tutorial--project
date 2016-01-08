@@ -53,7 +53,12 @@ public class MainActivity extends AppCompatActivity implements WeatherCalendarFr
             }
         } else {
             twoPane = false;
+            getSupportActionBar().setElevation(0f);
         }
+
+        WeatherCalendarFragment forecastFragment =  ((WeatherCalendarFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_forecast));
+        forecastFragment.setUseTodayLayout(!twoPane);
     }
 
     @Override

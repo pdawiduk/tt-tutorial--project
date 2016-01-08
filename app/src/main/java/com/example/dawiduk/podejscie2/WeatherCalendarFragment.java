@@ -28,6 +28,7 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
         public void onItemSelected(Uri dateUri);}
 
     public static final String MESSAGE_ALLIAS = "info";
+    private boolean usingTodayLayout;
 
     private final String LOG_TAG = WeatherCalendarFragment.class.getSimpleName();
     private ForecastAdapter adapter;
@@ -172,7 +173,21 @@ public class WeatherCalendarFragment extends Fragment implements LoaderManager.L
         inflater.inflate(R.menu.forecastfragment, menu);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
 
+        if (actPosition != ListView.INVALID_POSITION) {
+            outState.putInt(SELECTED_KEY, actPosition);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        usingTodayLayout = useTodayLayout;
+        if (adapter != null) {
+            adapter.setUseTodayLayout(useTodayLayout);
+        }
+    }
 
 }
 
